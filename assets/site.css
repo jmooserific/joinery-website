@@ -167,6 +167,10 @@ p:first-child { margin-top: 0; }
   margin-top: 1.75rem;
 }
 
+/* The closer after it gets the same air, so the spec line keeps a clear
+ * margin on both sides instead of reading as the top of a pair. */
+.spec + p { margin-top: 1.75rem; }
+
 /* Sections --------------------------------------------------------------- */
 
 section {
