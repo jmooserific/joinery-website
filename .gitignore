@@ -1,0 +1,4 @@
+.DS_Store
+
+# Swift build output from the exporters in tools/
+.build/

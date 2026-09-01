@@ -1,0 +1,283 @@
+/* Joinery — joinery.moosed.me
+ *
+ * Every token below is lifted from the shipped app: the colors and radii
+ * from docs/design/design_handoff_home_view/README.md and
+ * Joinery/Home/HomeTray.swift, the accent from the app icon's own gradient
+ * (which resolves to systemOrange, the asset catalog's AccentColor). Nothing
+ * here was picked to look good on a web page in isolation.
+ *
+ * No @font-face, no @import, no external anything. The privacy page says this
+ * site loads nothing from another domain, and that has to stay true.
+ */
+
+:root {
+  --paper: #FFFDF7;          /* TrayPalette.paper */
+  --ink: #191712;            /* Ink, primary */
+  --ink-2: rgba(25, 23, 18, 0.58);
+  --ink-3: rgba(25, 23, 18, 0.45); /* Ink, secondary */
+  --rule: rgba(25, 23, 18, 0.14);  /* Rule */
+  --panel: #F2F0EB;          /* TrayPalette.panelPaper */
+  --line: rgba(25, 23, 18, 0.62);  /* the cut, drawn */
+  --underline: rgba(25, 23, 18, 0.3);
+  --accent: #FF9500;         /* systemOrange / icon gradient, light */
+
+  --measure: 36rem;
+  --inset: 0rem;             /* the cut's breakout; 0 until there's room for it */
+  --radius-image: 3px;       /* board card radius */
+
+  --stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #191712;        /* the ink becomes the ground */
+    --ink: #F4F1E9;          /* Text on felt, primary */
+    --ink-2: rgba(244, 241, 233, 0.6);
+    --ink-3: rgba(244, 241, 233, 0.5); /* Text on felt, secondary */
+    --rule: rgba(255, 255, 255, 0.13); /* Hairline on felt */
+    --panel: #332E28;        /* Felt base */
+    --line: rgba(244, 241, 233, 0.55);
+    --underline: rgba(244, 241, 233, 0.35);
+    --accent: #FF9F0A;       /* systemOrange, dark */
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--stack);
+  font-size: 1.0625rem;      /* 17px, the app's body size */
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* One column. `text` is the reading measure; `wide` is the small breakout the
+ * cut gets, because it is the one thing on the page worth looking at closely.
+ * The outer minmax keeps the margins wide on a large screen instead of letting
+ * the column drift toward the edges.
+ *
+ * `--inset` stays 0 until the viewport can hold the measure plus the breakout.
+ * Below that the breakout would come out of the reading column instead of out
+ * of the margins, which squeezes the text to about a third of the screen. */
+.page {
+  display: grid;
+  grid-template-columns:
+    [full-start] minmax(1.5rem, 1fr)
+    [wide-start] minmax(0, var(--inset))
+    [text-start] minmax(0, var(--measure)) [text-end]
+    minmax(0, var(--inset)) [wide-end]
+    minmax(1.5rem, 1fr) [full-end];
+  padding: 5rem 0 6rem;
+}
+
+.page > * { grid-column: text; }
+.page > .wide { grid-column: wide; }
+
+@media (min-width: 52rem) {
+  .page { --inset: 5rem; }
+}
+
+@media (min-width: 60rem) {
+  .page { padding-top: 7.5rem; }
+}
+
+/* Type ------------------------------------------------------------------ */
+
+h1 {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+}
+
+/* The app's wordmark, outlined. Not the system face plus a `letter-spacing`:
+ * the logotype's kerning is a per-pair table (round-to-round joins want the
+ * most negative, r→y goes positive so the r's arm clears the y's diagonal),
+ * which one tracking value can't express — and outlines mean it looks the
+ * same on a machine that has never had SF Pro on it. `currentColor`, so it
+ * takes the ink in both appearances. */
+.wordmark {
+  margin: 0;
+  line-height: 0;
+}
+
+.wordmark svg {
+  display: block;
+  width: 7.5rem;
+  height: auto;
+}
+
+/* The heading's real text. The outlines carry the look; this carries the
+ * word, so the page still has a readable <h1> for anything that reads text
+ * rather than the accessibility tree, and the name stays selectable. */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.subtitle {
+  margin: 0.5rem 0 0;
+  font-size: 1.125rem;
+  color: var(--ink-2);
+}
+
+/* Section heads take the app's tray section label exactly: 12/15, weight 600,
+ * 0.13em, uppercase — the catalog register, and already the app's. */
+h2 {
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  line-height: 1.35;
+}
+
+p { margin: 1.15rem 0 0; }
+p:first-child { margin-top: 0; }
+
+.meta {
+  margin: 0.6rem 0 0;
+  font-size: 0.875rem;
+  color: var(--ink-3);
+}
+
+.subtitle + p,
+.meta + p { margin-top: 2rem; }
+
+/* The closing fact, stated flatly, the way a catalog states materials — its
+ * own line and its own air, but full ink. Knocked back it read as fine print,
+ * which is the opposite of what the sentence is doing. */
+.spec {
+  margin-top: 1.75rem;
+}
+
+/* Sections --------------------------------------------------------------- */
+
+section {
+  margin-top: 4.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--rule);
+}
+
+section > h2 + p { margin-top: 1.25rem; }
+
+/* Links ------------------------------------------------------------------ */
+
+a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: var(--underline);
+  text-underline-offset: 0.18em;
+}
+
+a:hover { text-decoration-color: var(--accent); }
+
+a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 1px;
+}
+
+/* The one place the accent does any work: the single action on the page. */
+.action { margin-top: 1.75rem; }
+
+.action a {
+  font-weight: 600;
+  text-decoration-thickness: 2px;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 0.25em;
+}
+
+/* Figures ---------------------------------------------------------------- */
+
+figure { margin: 0; }
+
+/* The cut: a real cut from the engine at a fixed seed, drawn rather than
+ * pictured, so it is sharp at any size and themed by CSS. It sits in the
+ * reading column with the paragraph that explains it, not in the breakout —
+ * it is evidence for the text beside it now, not the thing you land on. */
+.cut {
+  margin: 2.5rem 0 2rem;
+  color: var(--line);
+}
+
+.cut svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* The same label the section heads use, one notch quieter — the app's tray
+ * section label, which is a system face, not the mono fact line. */
+figcaption {
+  margin-top: 0.9rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.shots {
+  margin-top: 2.5rem;
+  display: grid;
+  gap: 2.5rem;
+}
+
+.shot { margin-top: 2.5rem; }
+
+.shots img,
+.shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--panel);
+  /* A hairline, not a shadow. The board shots carry the app's own ground and
+   * separate from the page on their own; the create sheet is white to its
+   * edges and would otherwise dissolve into the paper. */
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-image);
+}
+
+/* Support: the questions that actually arrive ---------------------------- */
+
+dl { margin: 1.75rem 0 0; }
+
+dt {
+  margin-top: 1.75rem;
+  font-weight: 600;
+}
+
+dt:first-child { margin-top: 0; }
+
+dd { margin: 0.3rem 0 0; }
+
+/* Footer ----------------------------------------------------------------- */
+
+footer {
+  margin-top: 4.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--rule);
+  font-size: 0.875rem;
+  color: var(--ink-2);
+}
+
+footer p { margin: 0.4rem 0 0; }
+footer p:first-child { margin-top: 0; }
