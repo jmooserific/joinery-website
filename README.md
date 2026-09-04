@@ -65,10 +65,12 @@ If a token here ever disagrees with the app, the app wins.
 | `assets/og.png` | The same engine and seed, 12 pieces, rendered flat for link previews. Far fewer pieces because a 63-piece cut turns to mush at thumbnail size. |
 | `assets/icon.svg`, `assets/apple-touch-icon.png`, `assets/favicon.png` | The app icon: `AppIcon.icon/Assets/icon_piece.svg` at the placement and gradient `icon.json` specifies. |
 | *(inline in `index.html`)* | The wordmark, outlined. Same string, face and per-pair kern table as `Joinery/Home/HomeWordmark.swift`. |
-| `assets/generate.{webp,jpg}` | Simulator capture of a cut being drawn — finished cut on one side, the line still advancing on the other. |
-| `assets/solve.{webp,jpg}` | Simulator capture of a board part way through: one joined block, loose pieces around it. |
-| `assets/piece.{webp,jpg}` | Simulator capture of one piece close up, illustrating the rim shading in "The pieces are the point". |
-| `assets/configure.{webp,jpg}` | Simulator capture of the create sheet, cropped below the picture to the title, credit and the three settings. |
+| `assets/piece.{webp,jpg}` | Pieces close up, rims shaded from one direction — the relief, in "The pieces are the point". |
+| `assets/generate.{webp,jpg}` | The cut mid-animation: the left of the picture already in pieces, the grid on the right still plain with knobs pushing out along it. |
+| `assets/presets.{webp,jpg}` | The create sheet on Easy: picture, credit, and the three presets. Pairs with `custom`. |
+| `assets/custom.{webp,jpg}` | The same sheet on Custom, with the piece count, rotation and snap distance each on its own control. |
+| `assets/joinery.mp4` | One puzzle start to finish — picking a painting, watching the cut, solving it. 3:22, silent, 552×1200, no audio track at all. |
+| `assets/joinery-poster.jpg` | The frame at 0:18 of that recording, where the cut has just finished across the whole picture. Shown until someone presses play. |
 
 ### Regenerating the cut
 
@@ -111,71 +113,105 @@ the word as visually-hidden text, so the heading still has real text in it.
 
 Re-run this if `HomeWordmark.kernEm` changes in the app.
 
-### If a walkthrough video is ever added
+### The walkthrough video
 
-There is no slot for one now. To add it, put a figure between the TestFlight
-line and the first section, and give it the breakout column:
+`assets/joinery.mp4` sits directly under the subtitle, in the reading column
+rather than the breakout — it is a phone screen, so it takes a phone's width
+and is centered in the column, and blown up to the full measure it would be
+over 1200px tall. It is first because it is the strongest thing on the page: it
+shows the cut being drawn and the puzzle being solved, which is the whole
+argument, before a word of the argument is made.
 
-```html
-<figure class="video wide">
-  <video controls playsinline preload="metadata"
-         poster="assets/walkthrough-poster.jpg" width="1280" height="720">
-    <source src="assets/walkthrough.webm" type="video/webm">
-    <source src="assets/walkthrough.mp4" type="video/mp4">
-  </video>
-</figure>
+`preload="none"` and a poster frame, so a visit that never presses play costs
+one 83KB JPEG rather than 6MB of video. There is no `autoplay`: the page has
+one action on it and this isn't it. The recording has no audio track, so
+`muted` would be decoration.
+
+MP4 only. The usual reason to ship a WebM beside it is Safari, and Safari is the
+one browser guaranteed to have H.264 — a second encode would be bytes in the
+repository for no browser that needs them. Self-hosted, no player library and
+no script, or the privacy page stops being true.
+
+A simulator screen recording comes out **anamorphic**: 1206×1080 coded pixels
+with a `pasp` atom of 180:437, which displays as 496×1080. `scale` works on the
+coded size and ignores that, so the target dimensions have to be given
+outright, along with `setsar=1` to drop the correction once it has been applied:
+
+```bash
+ffmpeg -i ScreenRecording.mp4 \
+  -vf "scale=552:1200,setsar=1,fps=30" \
+  -c:v libx264 -profile:v high -crf 27 -preset slow \
+  -pix_fmt yuv420p -movflags +faststart -an assets/joinery.mp4
+
+ffmpeg -ss 18 -i assets/joinery.mp4 -frames:v 1 -q:v 3 assets/joinery-poster.jpg
 ```
 
-```css
-.video { margin-top: 3.5rem; }
-.video video {
-  display: block;
-  width: 100%;
-  height: auto;
-  background: var(--panel);
-  border: 1px solid var(--rule);
-  border-radius: var(--radius-image);
-}
-```
-
-Ship both sources — Safari needs the MP4. Self-hosted, no player library and no
-script, or the privacy page stops being true. `.wide` is the only thing that
-uses the grid's breakout tracks; nothing else on the page does at the moment.
+552×1200 is twice the 272px the video renders at, and holds the 1320:2868 shape
+of the screen it came off. 60fps down to 30 halves the bitrate and costs
+nothing: the only motion is a finger dragging cardboard. `+faststart` puts the
+index at the front so it plays before it has finished arriving; `-an` makes the
+absent audio track explicit.
 
 ### Replacing the screenshots
 
-Each is a `<picture>` with a WebP source and a JPEG fallback, exported 1152px
-wide — twice the 576px reading column, so they stay sharp on a 2× display
-without upscaling the 1206px-wide simulator capture.
+Each is a `<picture>` with a WebP source and a JPEG fallback, exported 660px
+wide — half of the 1320px iPhone 17 Pro Max capture, and well over twice the
+280px each one renders at.
 
-Crop to the content rather than shipping the whole device frame: the status
-bar, the notch and the close button are noise, and the app's own ground makes a
-better surround than a phone outline. From a fresh simulator capture:
+Ship the **whole screen**, uncropped. Cropping to the content was the earlier
+rule and it was wrong: a crop is a claim about what the app looks like that the
+app never makes, and the status bar and the island are what anyone holding the
+phone actually sees. The cost is height — one 6.9-inch screen at the full
+reading measure runs past 1200px — so a screen is shown at 17rem, a phone's
+width, centered in the column, and renders at 272px.
+
+`.shot` is one screen. `.shots` is a pair side by side at that same width, for
+shots that only argue together — the presets and the three dials behind them
+are the only pair left. Reach for `.shot` unless the second one is doing work
+the first can't.
 
 ```bash
-magick shot.png -crop WxH+X+Y +repage -resize 1152x -strip -quality 78 assets/NAME.jpg
-magick shot.png -crop WxH+X+Y +repage -resize 1152x -strip -define webp:method=6 -quality 76 assets/NAME.webp
+magick shot.png -resize 660x1434 -strip -quality 82 -sampling-factor 4:2:0 -interlace Plane assets/NAME.jpg
+magick shot.png -resize 660x1434 -strip -define webp:method=6 -quality 80 assets/NAME.webp
 ```
 
-Update `width`/`height` on the `<img>` to the new pixel size, so the page
-reserves the right space and doesn't reflow while they load. All three are
-`loading="lazy"`; they all sit below the fold.
+`width`/`height` on the `<img>` stay 660×1434, so the page reserves the right
+space and doesn't reflow while they load. All of them are `loading="lazy"`;
+they all sit below the fold. The video does not — it is the first thing under
+the subtitle — but `preload="none"` means only its poster is fetched.
 
 Images carry a 1px `--rule` border. The board shots bring the app's own ground
 with them and would separate from the page without one, but the create sheet is
 white to its edges and dissolves into the paper otherwise; the border is on all
-of them so the set stays consistent.
+of them, and on the video, so the set stays consistent.
 
-Quality 78 is deliberate. The generation shot is the expensive one — fine white
-cut lines over canvas texture is close to the worst case for JPEG — and at 100%
-it is indistinguishable from quality 82 while saving about 70KB.
+Quality 82 rather than the 78 the crops used. A whole screen at 660px puts the
+board's fine cut lines into about a third the pixels they had before, and 78
+frays them; the difference is around 20KB a shot.
+
+660px is 2.4× the 272px they render at, not 2×. The extra is for the cut lines
+again: they are one device pixel wide in the capture and the first thing to go
+soft, and a shot resized to 544 has visibly fewer of them than one resized to
+660 and drawn at the same size.
 
 ## The TestFlight link
 
-It appears twice in `index.html` — once under the subtitle, once in the footer —
-and the two are identical on purpose. At launch both become "On the App Store"
-pointing at the product page. Two lines, and an HTML comment above each marking
-which is which.
+It appears twice in `index.html` — once after the opening two paragraphs, once
+in the footer — with the same href and the same words in both, on purpose. At
+launch both become "On the App Store" pointing at the product page. Two lines,
+and an HTML comment above each marking which is which.
+
+Only the treatment differs. The first is `.button`: the app's own Create
+control, accent fill and white label in a full capsule, centered, because it is
+the page's one action and it is asking you to go and press exactly that button.
+The footer one is a plain link among the other plain links, a way back to the
+first rather than a second ask. If a second button ever appears on the page,
+neither of them is the action any more.
+
+The white label on `--accent` is the app's pairing, not a web contrast ratio —
+it comes out around 2.2:1. Swapping `color: #fff` for `color: var(--ink)` in
+`.button` takes it to about 8:1 and keeps the fill, if that trade is ever worth
+making.
 
 ## Things this site deliberately doesn't have
 
