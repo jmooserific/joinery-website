@@ -20,6 +20,7 @@
   --line: rgba(25, 23, 18, 0.62);  /* the cut, drawn */
   --underline: rgba(25, 23, 18, 0.3);
   --accent: #FF9500;         /* systemOrange / icon gradient, light */
+  --accent-deep: #E07E00;    /* the same orange pressed, for the button's hover */
 
   --measure: 36rem;
   --inset: 0rem;             /* the cut's breakout; 0 until there's room for it */
@@ -39,6 +40,7 @@
     --line: rgba(244, 241, 233, 0.55);
     --underline: rgba(244, 241, 233, 0.35);
     --accent: #FF9F0A;       /* systemOrange, dark */
+    --accent-deep: #E08800;
   }
 }
 
@@ -199,14 +201,31 @@ a:focus-visible {
   border-radius: 1px;
 }
 
-/* The one place the accent does any work: the single action on the page. */
-.action { margin-top: 1.75rem; }
+/* The one place the accent does any work: the single action on the page. It is
+ * the app's own Create button — accent fill, white label, full capsule — which
+ * is the control this link is asking you to go and press. The footer keeps the
+ * same words as a plain link; there is one button on the page, or it stops
+ * being the action. */
+.action {
+  margin-top: 2.25rem;
+  text-align: center;
+}
 
-.action a {
+.button {
+  display: inline-block;
+  padding: 0.85rem 2.25rem;
+  background: var(--accent);
+  color: #fff;
   font-weight: 600;
-  text-decoration-thickness: 2px;
-  text-decoration-color: var(--accent);
-  text-underline-offset: 0.25em;
+  text-decoration: none;
+  border-radius: 999px;
+}
+
+.button:hover { background: var(--accent-deep); }
+
+.button:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
 }
 
 /* Figures ---------------------------------------------------------------- */
@@ -239,19 +258,54 @@ figcaption {
   color: var(--ink-3);
 }
 
+/* The shots are whole screens, uncropped, which makes them tall: one at the
+ * full reading measure runs past 1200px, and a reader scrolls a phone's length
+ * to get past a single picture. So a screen is shown at a phone's width, not
+ * the column's, and centered — the text is ranged left and a tall centered
+ * plate sits in it the way a plate sits in a book.
+ *
+ * `.shot` is one screen, `.shots` a pair side by side at the same width, for
+ * the two that only argue together: the presets, and the three dials behind
+ * them. The pair stays two-up all the way down; a single column would only
+ * make each one taller. */
+.shot,
 .shots {
   margin-top: 2.5rem;
-  display: grid;
-  gap: 2.5rem;
+  text-align: center;
 }
 
-.shot { margin-top: 2.5rem; }
+.shot picture,
+.shots {
+  display: block;
+  max-width: 17rem;
+  margin-left: auto;
+  margin-right: auto;
+}
 
-.shots img,
-.shot img {
+.shots {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  max-width: 35rem;
+}
+
+.shots figcaption { grid-column: 1 / -1; }
+
+/* The recording is that same screen, at that same width. */
+.clip { margin-top: 2.25rem; }
+
+.clip video {
+  max-width: 17rem;
+}
+
+.clip video,
+.shot img,
+.shots img {
   display: block;
   width: 100%;
   height: auto;
+  margin-left: auto;
+  margin-right: auto;
   background: var(--panel);
   /* A hairline, not a shadow. The board shots carry the app's own ground and
    * separate from the page on their own; the create sheet is white to its
@@ -259,6 +313,10 @@ figcaption {
   border: 1px solid var(--rule);
   border-radius: var(--radius-image);
 }
+
+.clip figcaption,
+.shot figcaption,
+.shots figcaption { text-align: center; }
 
 /* Support: the questions that actually arrive ---------------------------- */
 

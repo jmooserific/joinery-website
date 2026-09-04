@@ -28,14 +28,26 @@
   </h1>
   <p class="subtitle">Jigsaw puzzles cut from scratch</p>
 
+  <!-- The whole thing, start to finish: picking a painting, watching the cut,
+       and solving it. Nothing preloads until it's asked for, and there's no
+       audio track, so a visit that never presses play costs one poster frame.
+       Local file, like everything else here. -->
+  <figure class="clip">
+    <video src="assets/joinery.mp4" poster="assets/joinery-poster.jpg" width="552" height="1200" controls playsinline preload="none">
+      A screen recording of Joinery: a painting is chosen from the gallery, the cut is drawn across it, and the puzzle is solved a piece at a time.
+    </video>
+    <figcaption>One puzzle, start to finish</figcaption>
+  </figure>
+
   <p>Joinery makes jigsaw puzzles out of your own pictures, or out of a small gallery of paintings that comes with the app. Up to 300 pieces, on iPhone and iPad.</p>
 
   <p>The gallery leans Impressionist, mostly Monet and Van Gogh and Cassatt with some Winslow Homer, all of it from the open-access collections of the <a href="https://www.nga.gov/artworks/free-images-and-open-access">National Gallery of Art</a>, the <a href="https://www.artic.edu/open-access">Art Institute of Chicago</a>, and the <a href="https://www.metmuseum.org/hubs/open-access">Met</a>. They're the collections with scans good enough to hold up when a piece is sitting under your thumb.</p>
 
   <!-- TestFlight link, 1 of 2. At launch both become "On the App Store" and
-       point at the product page. The two are identical on purpose. -->
-  <p class="action"><a href="https://testflight.apple.com/join/JMXJzpcT">In beta on TestFlight</a></p>
-
+       point at the product page. Same href and same words in both places, on
+       purpose; only the treatment differs, because this one is the page's one
+       action and the footer one is a way back to it. -->
+  <p class="action"><a class="button" href="https://testflight.apple.com/join/JMXJzpcT">In beta on TestFlight</a></p>
 
   <section>
     <h2>The pieces are the point</h2>
@@ -60,9 +72,9 @@
     <figure class="shot">
       <picture>
         <source srcset="assets/piece.webp" type="image/webp">
-        <img src="assets/piece.jpg" width="1152" height="1099" loading="lazy" decoding="async" alt="A single piece close up, its edges shaded so it reads as raised off the table.">
+        <img src="assets/piece.jpg" width="660" height="1434" loading="lazy" decoding="async" alt="Pieces close up, each one's rim shaded from the same direction so they read as raised off the table.">
       </picture>
-      <figcaption>One piece, close up</figcaption>
+      <figcaption>Pieces, close up</figcaption>
     </figure>
   </section>
 
@@ -73,15 +85,12 @@
 
     <p>That isn't a loading animation with the real work hidden behind it. The app is drawing the actual geometry it's about to hand you, stage by stage, from the same record the engine keeps while it cuts. A fresh install has no puzzles in it, on purpose, so the first one you solve is one you watched get cut.</p>
 
-    <figure class="shots">
+    <figure class="shot">
       <picture>
         <source srcset="assets/generate.webp" type="image/webp">
-        <img src="assets/generate.jpg" width="1152" height="1528" loading="lazy" decoding="async" alt="A puzzle being cut: the finished cut on one side of the picture, the line still being drawn on the other.">
+        <img src="assets/generate.jpg" width="660" height="1434" loading="lazy" decoding="async" alt="A cut part way drawn: the left of the picture already in pieces, the grid on the right still plain, with knobs pushing out along the lines.">
       </picture>
-      <picture>
-        <source srcset="assets/solve.webp" type="image/webp">
-        <img src="assets/solve.jpg" width="1152" height="1223" loading="lazy" decoding="async" alt="A puzzle part way through: a joined block of sky, with loose pieces lying around it.">
-      </picture>
+      <figcaption>The cut, part way drawn</figcaption>
     </figure>
   </section>
 
@@ -94,11 +103,16 @@
 
     <p>What you do set is the terms, before you start: how many pieces, whether pieces can be turned, and how close one has to land before it snaps home. Three presets cover most people, and all three dials are there if you'd rather set them yourself.</p>
 
-    <figure class="shot">
+    <figure class="shots">
       <picture>
-        <source srcset="assets/configure.webp" type="image/webp">
-        <img src="assets/configure.jpg" width="1152" height="1404" loading="lazy" decoding="async" alt="Setting up a puzzle: the picture's title, artist and museum credit, then the piece count, rotation and snap distance.">
+        <source srcset="assets/presets.webp" type="image/webp">
+        <img src="assets/presets.jpg" width="660" height="1434" loading="lazy" decoding="async" alt="Setting up a puzzle: the picture's title, painter and museum credit, then the three presets, with Easy chosen.">
       </picture>
+      <picture>
+        <source srcset="assets/custom.webp" type="image/webp">
+        <img src="assets/custom.jpg" width="660" height="1434" loading="lazy" decoding="async" alt="The same sheet on Custom: piece count, rotation and snap distance, each on its own control.">
+      </picture>
+      <figcaption>Three presets, or the three dials</figcaption>
     </figure>
   </section>
 
